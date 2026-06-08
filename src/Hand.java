@@ -8,13 +8,20 @@ public class Hand {
         hand = new ArrayList<Card>();
         for (int i = 0; i < 2; i++) {
             hand.add(deck.getRandomCard());
-//            if (cards[i][j].getValue().equals("A")) {
-//                total += value + 1;
-//            } else if (cards[i][j].getValue().equals("J") || cards[i][j].getValue().equals("Q") || cards[i][j].getValue().equals("K")) {
-//                royals += cards[i][j].getValue();
-//            } else {
-//                total += value + Integer.parseInt(cards[i][j].getValue());
-//            }
+            if (getCard(i).getValue().equals("J") || getCard(i).getValue().equals("Q") || getCard(i).getValue().equals("K")) {
+                total += 10;
+            } else if (!getCard(i).getValue().equals("A")){
+                total += Integer.parseInt(getCard(i).getValue());
+            }
+        }
+        for (int i = 0; i < 2; i++) {
+            if (getCard(i).getValue().equals("A")) {
+                if (total <= 10) {
+                    total += 11;
+                } else {
+                    total += 1;
+                }
+            }
         }
 
     }
@@ -29,5 +36,9 @@ public class Hand {
 
     public int length() {
         return hand.size();
+    }
+
+    public int getTotal() {
+        return total;
     }
 }

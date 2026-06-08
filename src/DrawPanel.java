@@ -3,33 +3,37 @@ import java.awt.event.MouseEvent;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.awt.Font;
 
 class DrawPanel extends JPanel implements MouseListener {
 
-    private Deck d;
     private Hand dealersHand;
     private Hand playersHand;
 
     public DrawPanel() {
-        d = new Deck();
+        Deck d = new Deck();
         dealersHand = new Hand(d);
         playersHand = new Hand(d);
 
         this.addMouseListener(this);
     }
 
+    /*
+    * TODO:
+    * Add button for hit
+    * Add button for stand
+    * Add button to wager
+    * */
+
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         int x = 200;
         int y = 50;
+        int dealersTotal = dealersHand.getTotal();
+        int playersTotal = playersHand.getTotal();
         g.drawImage(dealersHand.getCard(0).getImage(), x, y, null);
-        g.drawString("Dealer's Total: " + dealersTotal, 50, y);
         x += 20;
         for (int i = 1; i < dealersHand.length(); i++) {
             try {
@@ -41,8 +45,9 @@ class DrawPanel extends JPanel implements MouseListener {
         }
         x = 200;
         y += 300;
-        for (int i = 0; i < playersHand.size(); i++) {
-            g.drawImage(playersHand.get(i).readImage(), x, y, null);
+        g.drawString("Players's Total: " + playersTotal, 50, y);
+        for (int i = 0; i < playersHand.length(); i++) {
+            g.drawImage(playersHand.getCard(i).readImage(), x, y, null);
             x += 20;
         }
 
