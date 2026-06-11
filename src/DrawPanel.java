@@ -13,9 +13,13 @@ class DrawPanel extends JPanel implements MouseListener {
     private Hand playersHand;
     private Rectangle hitHitbox;
     private Rectangle standHitbox;
+    private Rectangle restartHitbox;
     private boolean playersTurn;
     private boolean dealersTurn;
     private boolean gameOver;
+    private boolean gameWonBool;
+    private int gamesPlayed;
+    private int gamesWon;
 
     public DrawPanel() {
         d = new Deck();
@@ -24,14 +28,12 @@ class DrawPanel extends JPanel implements MouseListener {
         playersTurn = true;
         dealersTurn = false;
         gameOver = false;
+        gameWonBool = false;
+        gamesWon = 0;
+        gamesPlayed = 0;
 
         this.addMouseListener(this);
     }
-
-    /*
-    * TODO:
-    * Add button to wager
-    * */
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -39,6 +41,8 @@ class DrawPanel extends JPanel implements MouseListener {
         int y = 50;
         int dealersTotal = dealersHand.getTotal();
         int playersTotal = playersHand.getTotal();
+        Font serifBold = new Font("Serif", Font.BOLD, 20);
+        g.setFont(serifBold);
         if (!gameOver) {
             g.drawImage(dealersHand.getCard(0).getImage(), x, y, null);
             x += 20;
@@ -51,7 +55,7 @@ class DrawPanel extends JPanel implements MouseListener {
                 }
             }
         } else {
-            g.drawString("Dealer's Total: " + dealersTotal, 50, y);
+            g.drawString("Dealer's Total: " + dealersTotal, 25, y);
             for (int i = 0; i < dealersHand.length(); i++) {
                 g.drawImage(dealersHand.getCard(i).readImage(), x, y, null);
                 x += 20;
@@ -59,7 +63,7 @@ class DrawPanel extends JPanel implements MouseListener {
         }
         x = 200;
         y += 300;
-        g.drawString("Players's Total: " + playersTotal, 50, y);
+        g.drawString("Players's Total: " + playersTotal, 25, y);
         for (int i = 0; i < playersHand.length(); i++) {
             g.drawImage(playersHand.getCard(i).readImage(), x, y, null);
             x += 20;
@@ -76,20 +80,27 @@ class DrawPanel extends JPanel implements MouseListener {
         }
 
         if (!dealersTurn && !playersTurn) {
+            String str;
             gameOver = true;
             if (playersTotal > 21 && dealersTotal <= 21) {
-                System.out.println("you lost");
+                str = "You lost, try again.";
             } else if (dealersTotal > 21 || dealersTotal < playersTotal) {
-                System.out.println("you won");
+                str = "You won! Play again.";
+                gameWonBool = true;
             } else if (dealersTotal > playersTotal) {
-                System.out.println("you lost");
+                str = "You lost, try again.";
             } else {
-                System.out.println("tie");
+                str = "Tie, try again.";
             }
+            g.drawString(str, 150, 220);
+            g.drawString("RESTART", 180, 260);
+            restartHitbox = new Rectangle(175, 240, 100, 30);
+            g.drawRect((int) restartHitbox.getX(), (int) restartHitbox.getY(), (int) restartHitbox.getWidth(), (int) restartHitbox.getHeight());
         }
 
-        Font serifBold = new Font("Serif", Font.BOLD, 20);
-        g.setFont(serifBold);
+        g.drawString("Games played: " + gamesPlayed, 20, 150);
+        g.drawString("Games won: " + gamesWon, 20, 180);
+
         g.drawString("HIT", 355, 220);
         standHitbox = new Rectangle(330, 240, 80, 25);
         g.drawString("STAND", 340, 260);
@@ -113,6 +124,22 @@ class DrawPanel extends JPanel implements MouseListener {
                 playersTurn = false;
                 dealersTurn = true;
             }
+        }
+
+        if (gameOver && restartHitbox.contains(p)) {
+            gameOver = false;
+            gamesPlayed++;
+            if (gameWonBool) {
+                gamesWon++;
+            }
+            if (d.getDeck().size() <= 104) {
+                d = new Deck();
+            }
+            dealersHand = new Hand(d);
+            playersHand = new Hand(d);
+            dealersTurn = false;
+            playersTurn = true;
+            gameWonBool = false;
         }
     }
 

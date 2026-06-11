@@ -32,7 +32,7 @@ public class Hand {
                 total += Integer.parseInt(getCard(i).getValue());
             }
         }
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < hand.size(); i++) {
             if (getCard(i).getValue().equals("A")) {
                 if (total <= 10) {
                     total += 11;

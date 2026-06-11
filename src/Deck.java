@@ -8,7 +8,7 @@ public class Deck {
         String[] suits = {"clubs", "diamonds", "hearts", "spades"};
         String[] values = {"02", "03", "04", "05", "06", "07", "08", "09", "10", "A", "J", "K", "Q"};
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 6; i++) {
             for (String s : suits) {
                 for (String v : values) {
                     deck.add(new Card(s, v));
