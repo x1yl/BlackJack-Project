@@ -1,18 +1,14 @@
 import java.util.ArrayList;
 
 public class Hand {
-    private ArrayList<Card> hand;
+    private final ArrayList<Card> hand;
 
     public Hand(Deck deck) {
-        hand = new ArrayList<Card>();
+        hand = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             hand.add(deck.getRandomCard());
         }
 
-    }
-
-    public ArrayList<Card> getHand() {
-        return hand;
     }
 
     public Card getCard(int n) {
