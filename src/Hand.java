@@ -28,14 +28,16 @@ public class Hand {
                 total += Integer.parseInt(getCard(i).getValue());
             }
         }
+        int count = 0;
         for (int i = 0; i < hand.size(); i++) {
             if (getCard(i).getValue().equals("A")) {
-                if (total <= 10) {
-                    total += 11;
-                } else {
-                    total += 1;
-                }
+                count++;
             }
+        }
+        if (count == 1 && total <= 10) {
+            total += 11;
+        } else {
+            total += count;
         }
         return total;
     }

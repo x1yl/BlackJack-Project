@@ -16,10 +16,11 @@ class DrawPanel extends JPanel implements MouseListener {
     private Rectangle restartHitbox;
     private boolean playersTurn;
     private boolean dealersTurn;
-    private boolean gameOver;
-    private boolean gameWonBool;
     private int gamesPlayed;
     private int gamesWon;
+    private int gamesLost;
+    private int gamesTied;
+    private int gameEndState;
 
     public DrawPanel() {
         d = new Deck();
@@ -27,9 +28,10 @@ class DrawPanel extends JPanel implements MouseListener {
         playersHand = new Hand(d);
         playersTurn = true;
         dealersTurn = false;
-        gameOver = false;
-        gameWonBool = false;
+        gameEndState = 0;
         gamesWon = 0;
+        gamesLost = 0;
+        gamesTied = 0;
         gamesPlayed = 0;
 
         this.addMouseListener(this);
@@ -43,7 +45,7 @@ class DrawPanel extends JPanel implements MouseListener {
         int playersTotal = playersHand.getTotal();
         Font serifBold = new Font("Serif", Font.BOLD, 20);
         g.setFont(serifBold);
-        if (!gameOver) {
+        if (gameEndState == 0) {
             g.drawImage(dealersHand.getCard(0).getImage(), x, y, null);
             x += 20;
             for (int i = 1; i < dealersHand.length(); i++) {
@@ -81,30 +83,34 @@ class DrawPanel extends JPanel implements MouseListener {
 
         if (!dealersTurn && !playersTurn) {
             String str;
-            gameOver = true;
             if (playersTotal > 21 && dealersTotal <= 21) {
                 str = "You lost, try again.";
+                gameEndState = 1;
             } else if (dealersTotal > 21 || dealersTotal < playersTotal) {
                 str = "You won! Play again.";
-                gameWonBool = true;
+                gameEndState = 2;
             } else if (dealersTotal > playersTotal) {
                 str = "You lost, try again.";
+                gameEndState = 1;
             } else {
                 str = "Tie, try again.";
+                gameEndState = 3;
             }
-            g.drawString(str, 150, 220);
-            g.drawString("RESTART", 180, 260);
-            restartHitbox = new Rectangle(175, 240, 100, 30);
+            g.drawString(str, 170, 220);
+            g.drawString("RESTART", 200, 260);
+            restartHitbox = new Rectangle(195, 240, 100, 30);
             g.drawRect((int) restartHitbox.getX(), (int) restartHitbox.getY(), (int) restartHitbox.getWidth(), (int) restartHitbox.getHeight());
         }
 
         g.drawString("Games played: " + gamesPlayed, 20, 150);
         g.drawString("Games won: " + gamesWon, 20, 180);
+        g.drawString("Games lost: " + gamesLost, 20, 210);
+        g.drawString("Games tied: " + gamesTied, 20, 240);
 
-        g.drawString("HIT", 355, 220);
-        standHitbox = new Rectangle(330, 240, 80, 25);
-        g.drawString("STAND", 340, 260);
-        hitHitbox = new Rectangle(330, 200, 80, 25);
+        g.drawString("HIT", 405, 220);
+        standHitbox = new Rectangle(380, 240, 80, 25);
+        g.drawString("STAND", 390, 260);
+        hitHitbox = new Rectangle(380, 200, 80, 25);
         g.drawRect((int) hitHitbox.getX(), (int) hitHitbox.getY(), (int) hitHitbox.getWidth(), (int) hitHitbox.getHeight());
         g.drawRect((int) standHitbox.getX(), (int) standHitbox.getY(), (int) standHitbox.getWidth(), (int) standHitbox.getHeight());
 
@@ -126,11 +132,14 @@ class DrawPanel extends JPanel implements MouseListener {
             }
         }
 
-        if (gameOver && restartHitbox.contains(p)) {
-            gameOver = false;
+        if (gameEndState != 0 && restartHitbox.contains(p)) {
             gamesPlayed++;
-            if (gameWonBool) {
+            if (gameEndState == 1) {
+                gamesLost++;
+            } else if (gameEndState == 2) {
                 gamesWon++;
+            } else if (gameEndState == 3) {
+                gamesTied++;
             }
             if (d.getDeck().size() <= 104) {
                 d = new Deck();
@@ -139,7 +148,7 @@ class DrawPanel extends JPanel implements MouseListener {
             playersHand = new Hand(d);
             dealersTurn = false;
             playersTurn = true;
-            gameWonBool = false;
+            gameEndState = 0;
         }
     }
 
